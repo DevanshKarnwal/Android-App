@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -28,8 +30,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.request.Options
 import com.example.livechat.CommonProgressbar
+import com.example.livechat.CommonRow
+import com.example.livechat.DestinationScreens
 import com.example.livechat.LCViewModel
 import com.example.livechat.R
+import com.example.livechat.data.UserData
+import com.example.livechat.navigateTo
 
 @Composable
 fun ChatListScreen(navController: NavController, vm: LCViewModel) {
@@ -73,9 +79,11 @@ fun ChatListScreen(navController: NavController, vm: LCViewModel) {
                 }
             }
         ) {
-            Column(modifier = Modifier
-                .fillMaxSize()
-                .padding(it)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it)
+            ) {
                 if (chats.isNotEmpty()) {
                     Column(
                         modifier = Modifier
@@ -84,7 +92,29 @@ fun ChatListScreen(navController: NavController, vm: LCViewModel) {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                            Text("No Chats Available")
+                        Text("No Chats Available")
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .weight(1f)
+                    ) {
+                        items(chats) { chat ->
+                            val chatUser = if (chat.user1.userId == vm.userData.value?.userId) {
+                                chat.user2
+                            } else {
+                                chat.user1
+                            }
+                            CommonRow(imageUrl = chatUser.imageUrl, name = chatUser.name) {
+                                chat.chatId?.let{
+                                    navigateTo(
+                                        navController,
+                                        DestinationScreens.SingleChat.createRoute(id = it))
+                                }
+
+                            }
+                        }
                     }
                 }
             }

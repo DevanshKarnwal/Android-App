@@ -17,6 +17,7 @@ import com.example.livechat.Screens.ChatListScreen
 import com.example.livechat.Screens.LoginScreen
 import com.example.livechat.Screens.Profile
 import com.example.livechat.Screens.SignUpScreen
+import com.example.livechat.Screens.SingleChatScreen
 import com.example.livechat.Screens.SingleStatusScreen
 import com.example.livechat.Screens.StatusScreen
 import com.example.livechat.ui.theme.LiveChatTheme
@@ -28,12 +29,13 @@ sealed class DestinationScreens(val route: String) {
     object Login : DestinationScreens("login")
     object Profile : DestinationScreens("profile")
     object ChatList : DestinationScreens("chatList")
-    object SingleChat : DestinationScreens("singleChat/{chatId}"){
-        fun createRoute(id : String) = "singleChat/$id"
+    object SingleChat : DestinationScreens("singleChat/{chatId}") {
+        fun createRoute(id: String) = "singleChat/$id"
     }
+
     object StatusList : DestinationScreens("statusList")
-    object SingleStatus : DestinationScreens("singleStatus/{userId}"){
-        fun createRoute(userId : String) = "singleStatus/$userId"
+    object SingleStatus : DestinationScreens("singleStatus/{userId}") {
+        fun createRoute(userId: String) = "singleStatus/$userId"
     }
 }
 
@@ -46,35 +48,39 @@ class MainActivity : ComponentActivity() {
             LiveChatTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background) {
-                        ChatAppNavigation()
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    ChatAppNavigation()
                 }
             }
         }
     }
 
     @Composable
-    fun ChatAppNavigation(){
+    fun ChatAppNavigation() {
         val navController = rememberNavController()
         var vm = hiltViewModel<LCViewModel>()
         NavHost(navController = navController, startDestination = DestinationScreens.SignUp.route) {
 
-            composable(DestinationScreens.SignUp.route){
-                SignUpScreen(navController,vm)
+            composable(DestinationScreens.SignUp.route) {
+                SignUpScreen(navController, vm)
             }
-            composable(DestinationScreens.Login.route){
+            composable(DestinationScreens.Login.route) {
                 LoginScreen(vm = vm, navController = navController)
             }
-            composable(DestinationScreens.ChatList.route){
+            composable(DestinationScreens.ChatList.route) {
                 ChatListScreen(navController = navController, vm = vm)
             }
-            composable(DestinationScreens.StatusList.route){
+            composable(DestinationScreens.SingleChat.route) {
+                val chatId = it.arguments?.getString("chatId")
+                chatId?.let {
+                    SingleChatScreen(navController, vm, chatId)
+                }
+            }
+            composable(DestinationScreens.StatusList.route) {
                 StatusScreen(navController = navController, vm = vm)
             }
-            composable(DestinationScreens.SingleStatus.route){
-                SingleStatusScreen()
-            }
-            composable(DestinationScreens.Profile.route){
+            composable(DestinationScreens.Profile.route) {
                 Profile(navController = navController, vm = vm)
             }
 
