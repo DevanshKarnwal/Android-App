@@ -23,7 +23,6 @@ import com.example.livechat.navigateTo
 
 enum class BottomNavigationItem(val icon: Int, val navdestinationScreens: DestinationScreens) {
     CHATLIST(R.drawable.msg, DestinationScreens.ChatList),
-    STATUSLIST(R.drawable.restart, DestinationScreens.StatusList),
     PROFILE(R.drawable.user, DestinationScreens.Profile)
 }
 

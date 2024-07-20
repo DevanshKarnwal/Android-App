@@ -224,6 +224,8 @@ class LCViewModel @Inject constructor(
         signIn.value = false
         userData.value = null
         eventMutable.value = Event("Logged out")
+        depopulateMessage()
+        currentChatMessageListner?.remove()
     }
 
     fun onAddChat(number: String) {
